@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Session Storage Example</title>
+
+  <style>
+    ul {
+      list-style: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>TO-DO List -> Session Storage</h1>
+
+  <ul>
+    <li>
+      <input type="text" class="item" name="1">
+    </li>
+  </ul>
+
+  <button id="clear" type="button">Limpar</button>
+
+  <script type="text/javascript">
+
+    ;(function (w, d, undefined) {
+
+      'use strict';
+
+      var App = (function () {
+
+        var _each = function (array, callback) {
+          var length = array.length;
+          for (var i = 0; i < length; i++) {
+            callback(array[i]);
+          }
+        };
+
+        var _eventSubmit = function () {
+          var inputs = d.querySelectorAll('.item');
+          _each(inputs, function (input) {
+            input.addEventListener('keyup', function (e) {
+              if (e.keyCode === 13) {
+                this.disabled = true;
+
+                var key = this.name;
+                var value = this.value;
+                _setStorage(key, value);
+
+                var next = parseInt(key) + 1;
+                _addLine(next);
+              }
+            });
+          });
+        };
+
+        var _loadList = function () {
+          var length = sessionStorage.length;
+          if (length > 0) {
+            for (var i = 1; i <= length; i++) {
+              var key = i;
+              var value = _getStorage(key);
+              var input;
+              if (key != 1) {
+                var line = d.createElement('li');
+                input = _createInput(key);
+                input.value = value;
+                line.appendChild(input);
+                var list = d.querySelectorAll('ul li');
+                list[list.length - 1].appendChild(line);
+              } else {
+                input = d.querySelector('input[name="1"]');
+                input.value = value;
+              }
+
+              input.disabled = true;
+            }
+
+            _addLine(length + 1);
+          }
+        };
+
+        var _addLine = function (name) {
+          var line = d.createElement('li');
+          var input = _createInput(name);
+          line.appendChild(input);
+          var list = d.querySelectorAll('ul li');
+          list[list.length - 1].appendChild(line);
+
+          line.querySelector('input').focus();
+
+          _eventSubmit();
+        };
+
+        var _createInput = function (name) {
+          var input = d.createElement('input');
+          input.className = 'item'
+          input.type = 'text';
+          input.name = name;
+          return input;
+        };
+
+        var _eventClear = function () {
+          d.getElementById('clear').addEventListener('click', function (e) {
+            e.preventDefault();
+            _clearStorage();
+            w.location.reload();
+          });
+        };
+
+        var _clearStorage = function () {
+          sessionStorage.clear();
+        }
+
+        var _setStorage = function (key, value) {
+          sessionStorage.setItem(key, value);
+        };
+
+        var _getStorage = function (key) {
+          return sessionStorage.getItem(key);
+        };
+
+        var _checkSupport = function () {
+          return typeof(Storage) !== undefined
+        };
+
+        var _init = function () {
+          if (_checkSupport()) {
+            _eventSubmit();
+            _loadList();
+            _eventClear();
+          } else {
+            alert('Sorry, your browser does not support Web Storage...')
+          }
+        };
+
+        return {
+          init: _init,
+        }
+
+      })();
+
+      App.init();
+
+    })(window, document);
+
+  </script>
+  
+</body>
+</html>

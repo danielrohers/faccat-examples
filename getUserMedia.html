@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GetUserMedia Example</title>
+</head>
+<body>
+
+  <h2>GetUserMedia Example</h2>
+  <hr>
+
+  <video autoplay></video>
+
+  <script>
+
+    ;(function (window, document, navigator, undefined) {
+
+      navigator.getUserMedia = ( navigator.getUserMedia ||
+                       navigator.webkitGetUserMedia ||
+                       navigator.mozGetUserMedia ||
+                       navigator.msGetUserMedia);
+
+      if (navigator.getUserMedia) {
+         navigator.getUserMedia (
+            // constraints
+            {
+               video: true,
+               audio: true
+            },
+            // successCallback
+            function(localMediaStream) {
+               var video = document.querySelector('video');
+               video.src = window.URL.createObjectURL(localMediaStream);
+               // Do something with the video here, e.g. video.play()
+            },
+            // errorCallback
+            function(err) {
+               console.log("The following error occured: " + err);
+            }
+         );
+      } else {
+         console.log("getUserMedia not supported");
+      }
+
+    })(window, document, navigator);
+
+  </script>
+
+</body>
+</html>
