@@ -9,41 +9,29 @@
   <h2>GetUserMedia Example</h2>
   <hr>
 
-  <video autoplay></video>
+  <video autoplay controls></video>
 
   <script>
+    ;(function(window, document, navigator, undefined) {
+        navigator.getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
+        window.URL = (window.URL || window.webkitURL || window.mozURL || window.msURL);
 
-    ;(function (window, document, navigator, undefined) {
+        var _success = function(stream) {
+            var video = document.querySelector('video');
+            video.src = window.URL.createObjectURL(stream));
+            video.play();
+        };
 
-      navigator.getUserMedia = ( navigator.getUserMedia ||
-                       navigator.webkitGetUserMedia ||
-                       navigator.mozGetUserMedia ||
-                       navigator.msGetUserMedia);
+        var _error = function(err) {
+            alert("The following error occured: " + err);
+        };
 
-      if (navigator.getUserMedia) {
-         navigator.getUserMedia (
-            // constraints
-            {
-               video: true,
-               audio: true
-            },
-            // successCallback
-            function(localMediaStream) {
-               var video = document.querySelector('video');
-               video.src = window.URL.createObjectURL(localMediaStream);
-               // Do something with the video here, e.g. video.play()
-            },
-            // errorCallback
-            function(err) {
-               console.log("The following error occured: " + err);
-            }
-         );
-      } else {
-         console.log("getUserMedia not supported");
-      }
-
+        if (navigator.getUserMedia) {
+            navigator.getUserMedia({ video: true, audio: false }, _success, _error);
+       } else {
+           alert("getUserMedia not supported");
+       }
     })(window, document, navigator);
-
   </script>
 
 </body>
